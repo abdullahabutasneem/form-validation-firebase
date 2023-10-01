@@ -2,22 +2,34 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../component/firebase/firebase.init";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const [registerError, setRegisterError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegistration = (e) => {
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(name, email, password);
+    const termsRegister = e.target.terms.checked;
+    console.log(name, email, password, termsRegister);
 
     setRegisterError("");
+    setSuccess("");
 
     if (password.length < 6) {
       setRegisterError("Password should be at least 6 characters");
+      return;
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+    ) {
+      setRegisterError("Please enter a valid Email");
+      return;
+    } else if (!termsRegister) {
+      setRegisterError("Please accept our terms and condition!");
       return;
     }
 
@@ -33,8 +45,8 @@ const Register = () => {
   };
 
   return (
-    <div className="text-center py-8">
-      <div className="bg-gray-200 py-10 w-1/2 mx-auto">
+    <div className="py-8">
+      <div className="bg-gray-200 pl-10 py-10 w-1/2 mx-auto">
         <h2 className="text-3xl font-medium">Please Register</h2>
         <form onSubmit={handleRegistration}>
           <input
@@ -53,15 +65,29 @@ const Register = () => {
             required
           />
           <br />
-          <input
-            className="w-2/3 mb-4 border-black border-[1px] pl-3 py-2"
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          />
-          <br />
-
+          <div className="w-2/3 relative">
+            <input
+              className="w-full mb-4 border-black border-[1px] pl-3 py-2"
+              type={ !showPassword ? "password" : "text"}
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+            <span onClick={() => setShowPassword(!showPassword)} className="absolute top-3 right-3 cursor-pointer">
+                {
+                    !showPassword ? <FaEye></FaEye> : <FaEyeSlash></FaEyeSlash>
+                }
+            </span>
+          </div>
+          <div>
+            <input
+              className="mb-4 mr-1"
+              type="checkbox"
+              name="terms"
+              id="terms"
+            />
+            <label htmlFor="terms">Accept Terms and Conditions</label>
+          </div>
           {registerError && (
             <p className="text-red-800 mb-4 font-bold">{registerError}</p>
           )}
