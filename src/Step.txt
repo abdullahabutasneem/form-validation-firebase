@@ -1,0 +1,6 @@
+1. Create firebase project
+2. 
+3. 
+
+4. Sign up ->
+    - createUserWithEmailAndPassword(auth, email, password)
